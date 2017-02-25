@@ -19,3 +19,11 @@ py api.py
 ```
 
 The way Flask is setup, it allows you to make modifications to the code and reloads it.
+
+# Changelog
+
+### 25/02/17 - Skeleton and Reorganization
+
+- Reorganized the file structure.
+- Included extra debug code.
+- Provided an example of a route, with as much stuff as we may need. There is still other things that are needed.
