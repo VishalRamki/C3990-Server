@@ -49,18 +49,14 @@ Each Document will contain the data about the current on-going promotion
 
 ```
 {
+  "promotion_id": int,
+  "message": STRING,
+  "title": STRING,
+  "coupon": BOOLEAN,
+  "present": BOOLEAN,
+  "expires": DATE_TIME,
   "store_id": STR,
-  "beacon_id": HYBRIDINTSTR,
-  "promotions": [
-    {
-      "promotion_id": int,
-      "message": STRING,
-      "title": STRING,
-      "coupon": BOOLEAN,
-      "present": BOOLEAN,
-      "expires": DATE_TIME
-    }
-  ]
+  "beacon_id": STR
 }
 ```
 

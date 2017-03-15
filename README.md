@@ -22,6 +22,13 @@ The way Flask is setup, it allows you to make modifications to the code and relo
 
 # Changelog
 
+### 15/03/17 - Addition Of New Routes [store, promotion]
+
+- Added new routes and endpoints which correspond to the `/api/store` and `/api/promotion`
+- All four REST methods implemented for both store and promotion.
+- Store and Promotion deals with a single store or promotion. Additional classes will be written for sorting and the like.
+- General Bugfixing
+
 ### 25/02/17 - Skeleton and Reorganization
 
 - Reorganized the file structure.
