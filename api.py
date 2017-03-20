@@ -9,6 +9,9 @@ from routes.skeleton import skeleton
 from routes.serverinfo import ServerInformation
 from routes.store import store
 from routes.promotion import promotion
+from routes.beacon import beacon
+from routes.user import user
+from routes.userbeaconinteraction import userbeaconinteraction
 
 app = Flask(__name__)
 
@@ -22,6 +25,9 @@ api.add_resource(skeleton, "/skeleton", "/skeleton/<int:id>")
 api.add_resource(ServerInformation, "/api", "/api")
 api.add_resource(store, "/api/store", "/api/store/")
 api.add_resource(promotion, "/api/promotion", "/api/promotion/")
+api.add_resource(beacon, "/api/beacon", "/api/beacon/")
+api.add_resource(user, "/api/user", "/api/user/")
+api.add_resource(userbeaconinteraction, "/api/user/beacons", "/api/user/beacons/")
 
 
 

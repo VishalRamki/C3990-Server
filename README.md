@@ -22,6 +22,15 @@ The way Flask is setup, it allows you to make modifications to the code and relo
 
 # Changelog
 
+### 20/03/17 - Added New Routes [user, beacon, userbeaconinteraction]
+
+This brings our server to BETA completion. There is all the basic functionalities which will allow the apps to begin working.
+
+- Added new routes and endpoints, `/api/user`, `/api/beacon`, `/api/user/beacons`
+- REST methods implemented, however not all the REST functions are implemented for all the endpoints. (This is by design)
+- All the functions are raw input/ouput, no sorting or anything liek that.
+
+
 ### 15/03/17 - Addition Of New Routes [store, promotion]
 
 - Added new routes and endpoints which correspond to the `/api/store` and `/api/promotion`
