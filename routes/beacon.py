@@ -24,7 +24,8 @@ def returnJSON(isitthere):
     jsons = []
     for i in isitthere:
         jsons.append(i)
-    return json.dumps(jsons)
+    return jsons
+
 
 # FROM @https://stackoverflow.com/questions/5844672/delete-an-item-from-a-dictionary
 def removekey(d, key):
@@ -48,7 +49,7 @@ class beacon(MethodView):
         # get from rethink;
         ntbl = r.db("beaconrebuild").table("beacon").get_all(bid, index="beacon_id").run()
         print(ntbl)
-        return returnJSON(ntbl)
+        return json.dumps(ntbl)
 
     ## HTTP DELETE METHOD
     def delete(self):
@@ -74,6 +75,7 @@ class beacon(MethodView):
             toJSON = json.loads(args["update"].replace("'", '"'))
             r.db("beaconrebuild").table("beacon").get_all(args["beacon_id"], index="beacon_id").update(toJSON).run()
             nv = r.db("beaconrebuild").table("beacon").get_all(args["beacon_id"], index="beacon_id").limit(1).run()
+            # print(json.dumps(nv))
             return returnJSON(nv)
 
     ## HTTP POST METHOD

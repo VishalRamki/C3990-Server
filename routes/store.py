@@ -24,7 +24,7 @@ def returnJSON(isitthere):
     jsons = []
     for i in isitthere:
         jsons.append(i)
-    return json.dumps(jsons)
+    return jsons
 
 # FROM @https://stackoverflow.com/questions/5844672/delete-an-item-from-a-dictionary
 def removekey(d, key):
