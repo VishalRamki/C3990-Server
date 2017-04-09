@@ -31,11 +31,13 @@ class placeorder(MethodView):
         self.reqparse.add_argument("email", type =  str, required=True, help="No Email Provided")
         self.reqparse.add_argument("message", type =  str, required=False, help="No Message Provided")
         self.reqparse.add_argument("beacons", type =  str, required=True, help="No Beacon Value Provided")
+        self.reqparse.add_argument("user_id", type =  str, required=True, help="No Beacon Value Provided")
         args = self.reqparse.parse_args();
         initConnection()
         email = args["email"]
         message = args["message"] or ""
         beacons = args["beacons"]
+        user_id = args["user_id"]
 
-        x = r.db("beaconrebuild").table("beacon_orders").insert({"email": email, "message": message, "beacons": beacons}).run()
+        x = r.db("beaconrebuild").table("beacon_orders").insert({"email": email, "message": message, "beacons": beacons, "user_id": user_id}).run()
         return {"order_id": x["generated_keys"][0]}

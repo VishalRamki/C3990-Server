@@ -5,11 +5,12 @@ The Server code which is responsible for interfacing our [Android App]("https://
 ## Setting Up The Development Environment
 
 1. Setup the git repo locally via the GitHub Desktop app.
-2. Once that is done, make sure the dependances are installed via PIP: Flask, flask-restful.
+2. Once that is done, make sure the dependances are installed via PIP: Flask, flask-restful, flask-cors.
 
 ```
 pip install flask
 pip install flask-restful
+pip install flask-cors
 ```
 
 3. Run the python script via:
@@ -21,6 +22,11 @@ py api.py
 The way Flask is setup, it allows you to make modifications to the code and reloads it.
 
 # Changelog
+
+### 09/04/17 [1:52PM] - Bug Fixes, New Endpoint
+
+- Added a new endpoint `/api/materials/<string>`, this endpoint returns an uploaded image.
+- Modified the input of Place Order. It now requires User_ID To be present.
 
 ### 08/04/17 - Massive Updated;
 

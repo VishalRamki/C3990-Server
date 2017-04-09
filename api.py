@@ -1,7 +1,11 @@
 #  Python Packages
-from flask import Flask
+from flask import Flask, send_file
 from flask_restful import Api
 from flask_cors import CORS, cross_origin
+from flask.views import MethodView
+
+import json, uuid, sys, os
+
 # Custom Packages
 # for custom routes use the format
 # from routes.<file_name> import <class_name>
@@ -20,9 +24,10 @@ from routes.userbeacons import userbeacons
 from routes.interactstat_store import interactstat_store
 from routes.interactstat_userstore import interactstat_userstore
 from routes.promotionalmaterials import promotionalmaterials
+from routes.getmaterials import getmaterials
 from routes.placeorder import placeorder
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder = "uploaded")
 
 app.config["UPLOAD_FOLDER"] = "uploaded"
 
@@ -49,6 +54,7 @@ api.add_resource(oauth, "/api/user/oauth", "/api/user/oauth/")
 api.add_resource(userbeaconinteraction, "/api/user/interact/beacons", "/api/user/interact/beacons/")
 api.add_resource(userbeacons, "/api/user/beacons", "/api/user/beacons/")
 api.add_resource(promotionalmaterials, "/api/promotion/materials", "/api/promotion/materials/")
+api.add_resource(getmaterials, "/api/materials/<string:id>")
 api.add_resource(placeorder, "/api/order", "/api/order/")
 
 

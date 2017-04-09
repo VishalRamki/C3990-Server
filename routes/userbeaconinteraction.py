@@ -39,8 +39,8 @@ class userbeaconinteraction(MethodView):
 
     ## HTTP POST METHOD
     def post(self):
-        self.reqparse.add_argument("user_id", type=str, required=True, help="User ID Not Defined.")
-        self.reqparse.add_argument("update", type=str, required=True, help="Update Not Defined.")
+        self.reqparse.add_argument("user_id", type=str, required=True, help="User ID Not Defined.", location="json")
+        self.reqparse.add_argument("update", type=str, required=True, help="Update Not Defined.", location="json")
         args = self.reqparse.parse_args()
         initConnection()
 
@@ -48,8 +48,10 @@ class userbeaconinteraction(MethodView):
         if (count <= 0):
             r.db("beaconrebuild").table("user_interactbeacon").insert({"user_id": args["user_id"], "interacted": []}).run()
 
-        toJSON = json.loads(args["update"].replace("'", '"'))
+        toJSON = json.loads(args["update"])
 
         r.db("beaconrebuild").table("user_interactbeacon").get_all(args["user_id"],index="user_id").update({
             "interacted": r.row["interacted"].default([]).append({"store_id": toJSON["store_id"], "beacon_id": toJSON["beacon_id"], "date": r.now().to_iso8601(), "promotion_id": toJSON["promotion_id"]})
         }).run()
+
+        return []
