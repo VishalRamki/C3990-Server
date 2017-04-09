@@ -1,7 +1,7 @@
 #  Python Packages
 from flask import Flask
 from flask_restful import Api
-
+from flask_cors import CORS, cross_origin
 # Custom Packages
 # for custom routes use the format
 # from routes.<file_name> import <class_name>
@@ -10,11 +10,23 @@ from routes.serverinfo import ServerInformation
 from routes.store import store
 from routes.promotion import promotion
 from routes.beacon import beacon
+from routes.beaconstore import beaconstore
 from routes.user import user
+from routes.userstores import userstores
+from routes.userstorepromotions import userstorepromotions
+from routes.oauth import oauth
 from routes.userbeaconinteraction import userbeaconinteraction
+from routes.userbeacons import userbeacons
+from routes.interactstat_store import interactstat_store
+from routes.interactstat_userstore import interactstat_userstore
+from routes.promotionalmaterials import promotionalmaterials
+from routes.placeorder import placeorder
 
 app = Flask(__name__)
 
+app.config["UPLOAD_FOLDER"] = "uploaded"
+
+cors = CORS(app, resources={"*": {"origins": "*"}})
 ## For Debuging Purposes ONLY.
 ## We Need to Define A Class Specific catch 404 erros.
 api = Api(app, catch_all_404s=True)
@@ -26,8 +38,18 @@ api.add_resource(ServerInformation, "/api", "/api")
 api.add_resource(store, "/api/store", "/api/store/")
 api.add_resource(promotion, "/api/promotion", "/api/promotion/")
 api.add_resource(beacon, "/api/beacon", "/api/beacon/")
+api.add_resource(beaconstore, "/api/beacon/store", "/api/beacon/store/")
+api.add_resource(interactstat_store, "/api/stats/interact/store", "/api/stats/interact/store/")
+api.add_resource(interactstat_userstore, "/api/stats/interact/user/store", "/api/stats/interact/user/store/")
+# api.add_resource(interactstat_userstore, "/api/stats/interact/user/store/promotion", "/api/stats/interact/user/store/")
 api.add_resource(user, "/api/user", "/api/user/")
-api.add_resource(userbeaconinteraction, "/api/user/beacons", "/api/user/beacons/")
+api.add_resource(userstores, "/api/user/store", "/api/user/store/")
+api.add_resource(userstorepromotions, "/api/user/store/promotion", "/api/user/store/promotion/")
+api.add_resource(oauth, "/api/user/oauth", "/api/user/oauth/")
+api.add_resource(userbeaconinteraction, "/api/user/interact/beacons", "/api/user/interact/beacons/")
+api.add_resource(userbeacons, "/api/user/beacons", "/api/user/beacons/")
+api.add_resource(promotionalmaterials, "/api/promotion/materials", "/api/promotion/materials/")
+api.add_resource(placeorder, "/api/order", "/api/order/")
 
 
 

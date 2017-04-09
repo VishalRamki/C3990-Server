@@ -5,33 +5,8 @@ from flask.views import MethodView
 import rethinkdb as r
 import json, uuid, sys
 
-## This needs to go in its own file;
-def getBeacons(beaconData, obj):
-    nbeacons = r.db("beaconrebuild").table("store_promotion").get_all(obj["store_id"], index="store_id").run()
-    print(nbeacons)
-    bex = {}
-    for beacon in nbeacons:
-        bex["beacon_id"] = beacon["beacon_id"]
-        bex["promotions"] = beacon["promotions"]
-        obj["beacons"].append(bex)
-    # ntt = r.db("beaconrebuild").table("store")
-    return json.dumps(obj)
-
-def initConnection():
-    return r.connect("localhost", 28015).repl()
-
-def returnJSON(isitthere):
-    jsons = []
-    for i in isitthere:
-        jsons.append(i)
-    return jsons
-
-# FROM @https://stackoverflow.com/questions/5844672/delete-an-item-from-a-dictionary
-def removekey(d, key):
-    r = dict(d)
-    del r[key]
-    return r
-
+## Customer Helper Functions
+from functions import *
 
 class userbeaconinteraction(MethodView):
     def __init__(self):
@@ -40,7 +15,7 @@ class userbeaconinteraction(MethodView):
 
     ## HTTP GET METHOD
     def get(self):
-        self.reqparse.add_argument("user_id", type =  str, required=True, help="No User ID Provided", location="json")
+        self.reqparse.add_argument("user_id", type =  str, required=True, help="No User ID Provided")
         args = self.reqparse.parse_args();
         initConnection()
         bid = args["user_id"]
@@ -64,12 +39,17 @@ class userbeaconinteraction(MethodView):
 
     ## HTTP POST METHOD
     def post(self):
-        self.reqparse.add_argument("user_id", type=str, required=True, help="Store ID Not Defined.", location="json")
-        self.reqparse.add_argument("update", type=str, required=True, help="JSON Update not Defined.", location="json")
+        self.reqparse.add_argument("user_id", type=str, required=True, help="User ID Not Defined.")
+        self.reqparse.add_argument("update", type=str, required=True, help="Update Not Defined.")
         args = self.reqparse.parse_args()
         initConnection()
+
+        count = r.db("beaconrebuild").table("user_interactbeacon").get_all(args["user_id"], index="user_id").count().run()
+        if (count <= 0):
+            r.db("beaconrebuild").table("user_interactbeacon").insert({"user_id": args["user_id"], "interacted": []}).run()
+
         toJSON = json.loads(args["update"].replace("'", '"'))
-        if ("interacted" in toJSON):
-            r.db("beaconrebuild").table("user_interactbeacon").get_all(args["user_id"],index="user_id").update({
-                "interacted": r.row["interacted"].default([]).append({"store_id": toJSON["interacted"]["store_id"], "beacon_id": toJSON["interacted"]["beacon_id"]})
-            }).run()
+
+        r.db("beaconrebuild").table("user_interactbeacon").get_all(args["user_id"],index="user_id").update({
+            "interacted": r.row["interacted"].default([]).append({"store_id": toJSON["store_id"], "beacon_id": toJSON["beacon_id"], "date": r.now().to_iso8601(), "promotion_id": toJSON["promotion_id"]})
+        }).run()

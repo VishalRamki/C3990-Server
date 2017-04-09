@@ -5,33 +5,8 @@ from flask.views import MethodView
 import rethinkdb as r
 import json, uuid, sys
 
-## This needs to go in its own file;
-def getBeacons(beaconData, obj):
-    nbeacons = r.db("beaconrebuild").table("store_promotion").get_all(obj["store_id"], index="store_id").run()
-    print(nbeacons)
-    bex = {}
-    for beacon in nbeacons:
-        bex["beacon_id"] = beacon["beacon_id"]
-        bex["promotions"] = beacon["promotions"]
-        obj["beacons"].append(bex)
-    # ntt = r.db("beaconrebuild").table("store")
-    return json.dumps(obj)
-
-def initConnection():
-    return r.connect("localhost", 28015).repl()
-
-def returnJSON(isitthere):
-    jsons = []
-    for i in isitthere:
-        jsons.append(i)
-    return jsons
-
-# FROM @https://stackoverflow.com/questions/5844672/delete-an-item-from-a-dictionary
-def removekey(d, key):
-    r = dict(d)
-    del r[key]
-    return r
-
+## Customer Helper Functions
+from functions import *
 
 class user(MethodView):
     def __init__(self):
@@ -40,7 +15,7 @@ class user(MethodView):
 
     ## HTTP GET METHOD
     def get(self):
-        self.reqparse.add_argument("user_id", type =  str, required=True, help="No User ID Provided", location="json")
+        self.reqparse.add_argument("user_id", type =  str, required=True, help="No google_oauth_token Provided", location="json")
         args = self.reqparse.parse_args();
         initConnection()
         bid = args["user_id"]
@@ -77,13 +52,13 @@ class user(MethodView):
 
     ## HTTP POST METHOD
     def post(self):
-        self.reqparse.add_argument("g_oauth_token", type =  str, required=True, help="No User Token Provided", location="json")
+        self.reqparse.add_argument("google_oauth_token", type =  str, required=True, help="No User Token Provided")
         args = self.reqparse.parse_args();
         initConnection()
         user_id = str(uuid.uuid4())
         r.db("beaconrebuild").table("user").insert({
           "user_id": user_id,
-          "google_oauth_token": args["g_oauth_token"]
+          "google_oauth_token": args["google_oauth_token"]
         }).run()
         isitthere = r.db("beaconrebuild").table("user").filter({"user_id": user_id}).limit(1).run()
         return returnJSON(isitthere)

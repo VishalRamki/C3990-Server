@@ -5,34 +5,8 @@ from flask.views import MethodView
 import rethinkdb as r
 import json, uuid, sys
 
-## This needs to go in its own file;
-def getBeacons(beaconData, obj):
-    nbeacons = r.db("beaconrebuild").table("store_promotion").get_all(obj["store_id"], index="store_id").run()
-    print(nbeacons)
-    bex = {}
-    for beacon in nbeacons:
-        bex["beacon_id"] = beacon["beacon_id"]
-        bex["promotions"] = beacon["promotions"]
-        obj["beacons"].append(bex)
-    # ntt = r.db("beaconrebuild").table("store")
-    return json.dumps(obj)
-
-def initConnection():
-    return r.connect("localhost", 28015).repl()
-
-def returnJSON(isitthere):
-    jsons = []
-    for i in isitthere:
-        jsons.append(i)
-    return jsons
-
-
-# FROM @https://stackoverflow.com/questions/5844672/delete-an-item-from-a-dictionary
-def removekey(d, key):
-    r = dict(d)
-    del r[key]
-    return r
-
+## Customer Helper Functions
+from functions import *
 
 class beacon(MethodView):
     def __init__(self):
@@ -73,6 +47,8 @@ class beacon(MethodView):
             }}
         else:
             toJSON = json.loads(args["update"].replace("'", '"'))
+            print(args["update"])
+
             r.db("beaconrebuild").table("beacon").get_all(args["beacon_id"], index="beacon_id").update(toJSON).run()
             nv = r.db("beaconrebuild").table("beacon").get_all(args["beacon_id"], index="beacon_id").limit(1).run()
             # print(json.dumps(nv))

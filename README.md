@@ -22,6 +22,14 @@ The way Flask is setup, it allows you to make modifications to the code and relo
 
 # Changelog
 
+### 08/04/17 - Massive Updated;
+
+- The Entire System was redone.
+- Added many new endpoints.
+- Changed the way JSON is returned and accepted.
+- Created a File Upload Endpoint.
+- Refactored the code.
+
 ### 20/03/17 - Added New Routes [user, beacon, userbeaconinteraction]
 
 This brings our server to BETA completion. There is all the basic functionalities which will allow the apps to begin working.

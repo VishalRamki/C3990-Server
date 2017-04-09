@@ -5,32 +5,8 @@ from flask.views import MethodView
 import rethinkdb as r
 import json, uuid, sys
 
-## This needs to go in its own file;
-def getBeacons(beaconData, obj):
-    nbeacons = r.db("beaconrebuild").table("store_promotion").get_all(obj["store_id"], index="store_id").run()
-    print(nbeacons)
-    bex = {}
-    for beacon in nbeacons:
-        bex["beacon_id"] = beacon["beacon_id"]
-        bex["promotions"] = beacon["promotions"]
-        obj["beacons"].append(bex)
-    # ntt = r.db("beaconrebuild").table("store")
-    return json.dumps(obj)
-
-def initConnection():
-    return r.connect("localhost", 28015).repl()
-
-def returnJSON(isitthere):
-    jsons = []
-    for i in isitthere:
-        jsons.append(i)
-    return jsons
-
-# FROM @https://stackoverflow.com/questions/5844672/delete-an-item-from-a-dictionary
-def removekey(d, key):
-    r = dict(d)
-    del r[key]
-    return r
+## Customer Helper Functions
+from functions import *
 
 
 class store(MethodView):
@@ -40,7 +16,7 @@ class store(MethodView):
 
     ## HTTP GET METHOD
     def get(self):
-        self.reqparse.add_argument("store_id", type =  str, required=True, help="No Store ID Provided", location="json")
+        self.reqparse.add_argument("store_id", type =  str, required=True, help="No Store ID Provided")
         args = self.reqparse.parse_args();
         initConnection()
         print("store_id: ", args["store_id"])
@@ -48,21 +24,23 @@ class store(MethodView):
         # get from rethink;
         ntbl = r.db("beaconrebuild").table("store").get_all(store_id, index="store_id").run()
         # ntbl = r.db("beaconrebuild").table("store").eqJoin("beacons", r.db("beaconrebuild").table("store_promotion"), {index: "beacon_id"}).run()
-        print(ntbl)
+        # print(ntbl)
         iterm = {}
         finalJSON = []
         for item in ntbl:
-            iterm['store_id'] = item['store_id']
-            iterm["store_manager_id"] = item["store_manager_id"]
-            iterm["beacons"] = []
-            finalJSON.append(getBeacons(item["beacons"], iterm))
+            # iterm['store_id'] = item['store_id']
+            # iterm["store_manager_id"] = item["store_manager_id"]
+            # iterm["beacons"] = item["beacons"]
+            finalJSON.append(item)
+            # finalJSON.append(getBeacons(item["beacons"], iterm))
 
-        print(finalJSON)
-        # return finalJSON
+        # print(finalJSON)
         return finalJSON
+        # return ntbl
+        # return returnJSON(ntbl)
     ## HTTP DELETE METHOD
     def delete(self):
-        self.reqparse.add_argument("store_id", type=str, required=True, help="Store ID Not Defined.", location="json")
+        self.reqparse.add_argument("store_id", type=str, required=True, help="Store ID Not Defined.")
         args = self.reqparse.parse_args()
         initConnection()
         r.db("beaconrebuild").table("store").get_all(args["store_id"], index="store_id").delete().run()
@@ -70,8 +48,8 @@ class store(MethodView):
 
     ## HTTP PUT METHOD
     def put(self):
-        self.reqparse.add_argument("store_id", type=str, required=True, help="Store ID Not Defined.", location="json")
-        self.reqparse.add_argument("update", type=str, required=True, help="JSON Update not Defined.", location="json")
+        self.reqparse.add_argument("store_id", type=str, required=True, help="Store ID Not Defined.")
+        self.reqparse.add_argument("update", type=str, required=True, help="JSON Update not Defined.")
         args = self.reqparse.parse_args()
         initConnection()
         # check if store_id exists in database;
@@ -81,22 +59,22 @@ class store(MethodView):
                 "content": "There is No Store with that ID"
             }}
         else:
-            toJSON = json.loads(args["update"].replace("'", '"'))
+            toJSON = json.loads(args["update"])
             if ("beacons" in toJSON):
-                print("WHUT")
+                # return "BEACONS"
                 r.db("beaconrebuild").table("store").get_all(args["store_id"],index="store_id").update({
-                    "beacons": r.row["beacons"].default([]).append({"beacon_id": toJSON["beacons"]["beacon_id"]})
+            #         "beacons": r.row["beacons"].default([]).append({"beacon_id": toJSON["beacons"]["beacon_id"]})
+                        "beacons": toJSON["beacons"]
                 }).run()
-            print(toJSON["beacons"]["beacon_id"])
-            print(removekey(toJSON, "beacons"))
-            sys.stdout.flush()
-            r.db("beaconrebuild").table("store").get_all(args["store_id"], index="store_id").update(removekey(toJSON, "beacons")).run()
+                toJSON = removekey(toJSON, "beacons")
+            # # sys.stdout.flush()
+            r.db("beaconrebuild").table("store").get_all(args["store_id"], index="store_id").update(toJSON).run()
             nv = r.db("beaconrebuild").table("store").get_all(args["store_id"], index="store_id").limit(1).run()
             return returnJSON(nv)
 
     ## HTTP POST METHOD
     def post(self):
-        self.reqparse.add_argument("store_manager_id", type=str, required=True, help="Store Manager Not Defined.", location="json")
+        self.reqparse.add_argument("store_manager_id", type=str, required=True, help="Store Manager Not Defined.")
         args = self.reqparse.parse_args()
         print(args["store_manager_id"])
         # get the data from the db;
