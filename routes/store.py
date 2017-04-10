@@ -85,7 +85,9 @@ class store(MethodView):
         r.db("beaconrebuild").table("store").insert({
           "store_id": str(genUUID),
           "store_manager_id": args["store_manager_id"],
-          "beacons": []
+          "beacons": [],
+          "long": "",
+          "lat": ""
         }).run()
         isitthere = r.db("beaconrebuild").table("store").filter({"store_id": str(genUUID)}).limit(1).run()
         return returnJSON(isitthere)

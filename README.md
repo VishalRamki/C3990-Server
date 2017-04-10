@@ -23,6 +23,10 @@ The way Flask is setup, it allows you to make modifications to the code and relo
 
 # Changelog
 
+### 09/04/17
+
+- Added Longtitude and Latitude fields in store.
+
 ### 09/04/17 [1:52PM] - Bug Fixes, New Endpoint
 
 - Added a new endpoint `/api/materials/<string>`, this endpoint returns an uploaded image.

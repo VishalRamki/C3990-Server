@@ -44,7 +44,7 @@ class userfavourite(MethodView):
         toJSON = json.loads(args["update"])
 
         r.db("beaconrebuild").table("user_favouritestore").get_all(args["user_id"],index="user_id").update({
-            "favouritestores": r.row["interacted"].default([]).append(args["store_id"])
+            "favouritestores": r.row["favouritestores"].default([]).append(args["store_id"])
         }).run()
 
         return []

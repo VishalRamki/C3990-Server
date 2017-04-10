@@ -26,6 +26,7 @@ from routes.interactstat_userstore import interactstat_userstore
 from routes.promotionalmaterials import promotionalmaterials
 from routes.getmaterials import getmaterials
 from routes.placeorder import placeorder
+from routes.userfavourite import userfavourite
 
 app = Flask(__name__, static_folder = "uploaded")
 
@@ -46,7 +47,6 @@ api.add_resource(beacon, "/api/beacon", "/api/beacon/")
 api.add_resource(beaconstore, "/api/beacon/store", "/api/beacon/store/")
 api.add_resource(interactstat_store, "/api/stats/interact/store", "/api/stats/interact/store/")
 api.add_resource(interactstat_userstore, "/api/stats/interact/user/store", "/api/stats/interact/user/store/")
-# api.add_resource(interactstat_userstore, "/api/stats/interact/user/store/promotion", "/api/stats/interact/user/store/")
 api.add_resource(user, "/api/user", "/api/user/")
 api.add_resource(userstores, "/api/user/store", "/api/user/store/")
 api.add_resource(userstorepromotions, "/api/user/store/promotion", "/api/user/store/promotion/")
@@ -56,6 +56,7 @@ api.add_resource(userbeacons, "/api/user/beacons", "/api/user/beacons/")
 api.add_resource(promotionalmaterials, "/api/promotion/materials", "/api/promotion/materials/")
 api.add_resource(getmaterials, "/api/materials/<string:id>")
 api.add_resource(placeorder, "/api/order", "/api/order/")
+api.add_resource(userfavourite, "/api/user/favourite", "/api/user/favourite/")
 
 
 
