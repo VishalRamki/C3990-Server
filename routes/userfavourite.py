@@ -20,7 +20,23 @@ class userfavourite(MethodView):
         initConnection()
 
         response = r.db("beaconrebuild").table("user_favouritestore").get_all(args["user_id"], index="user_id").run()
-        return returnJSON(response)
+
+        ## okay for each user;
+
+        document = []
+        fs = []
+        for user in response:
+            ## use the single user to create
+            for store in user["favouritestores"]:
+                x = r.db("beaconrebuild").table("store").filter({"store_id": store}).run()
+                # for each;
+                for store in x:
+                    z = r.db("beaconrebuild").table("store_promotion").filter({"store_id": store["store_id"], "active": "yes"}).run()
+                    for promo in z:
+                        store["promotion"] = promo
+                    fs.append(store)
+            user["favouritestores"] = fs
+            return user
 
     ## HTTP DELETE METHOD
     def delete(self):
