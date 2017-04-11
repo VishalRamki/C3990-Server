@@ -1,11 +1,45 @@
+
+##  promotion.py
+##
+##  provides the promotion endpoint;
+##
+##  ENDPOINT: /api/promotion
+##  REST STATES: GET, DELETE, PUT, POST
+##
+##  Input:
+##  title - found in the JSON component of the request or the default location.
+##  message - found in the JSON component of the request or the default location.
+##  coupon - found in the JSON component of the request or the default location.
+##  present - found in the JSON component of the request or the default location.
+##  expires - found in the JSON component of the request or the default location.
+##  store_id - found in the JSON component of the request or the default location.
+##  beacon_id - found in the JSON component of the request or the default location.
+##  active - found in the JSON component of the request or the default location.
+##  promotionImage - found in the JSON component of the request or the default location.
+##  update - found in the JSON component of the request or the default location.
+##
+##
+##  Example: GET, DELETE
+##  curl -H "Content-Type: application/json" -X <GET/DELETE> -d '{"promoton_id": <string:beacon_id>}' http://localhost:5000/api/promotion
+##
+##  Example: PUT
+##  curl -H "Content-Type: application/json" -X PUT -d '{"promotion_id": "<string:promotion_id>", "update": <string:json_object_that_stringified>}' http://localhost:5000/api/promotion
+##  NB: "UPDATE" requires a stringified JSON Object which contains the key-value pairs for the fields which you want to update. See the GET Response to see what you can modifiy
+##
+##  Example: POST
+##  curl -H "Content-Type: application/json" -X POST -d '{"title": <string:title>, "message": <string:message>, "coupon": <string:coupon>, "present": <string:present>, "expires": <string:expires>, "store_id": <string:store_id>, "beacon_id": <string:beacon_id>, "promotionImage": <string:promotionImage>, "active": <string:active>}' http://localhost:5000/api/beacon
+
+##  Required Flask Packages;;
 from flask import Flask
 from flask_restful import reqparse, abort, Api, Resource
 from flask.views import MethodView
 
+##  Required Database
 import rethinkdb as r
+##  Required Python Packages;
 import json, uuid, sys
 
-## Customer Helper Functions
+## Custom Helper Functions
 from functions import *
 
 class promotion(MethodView):
@@ -13,7 +47,22 @@ class promotion(MethodView):
         self.reqparse = reqparse.RequestParser(bundle_errors=True)
         super(promotion, self).__init__()
 
-    ## HTTP GET METHOD
+    ##  HTTP GET METHOD
+    ##  onFailure => []
+    ##  onSuccess => [{Document}] NB: There will only be one entry in the JSONArray.
+    ##  Example Document:
+    ##  {
+    ##    "active": <string>,
+    ##    "coupon": <string>,
+    ##    "expires": <string>,
+    ##    "id": <string>,
+    ##    "message": <string>,
+    ##    "present": <string>,
+    ##    "promotionImage": <string>,
+    ##    "promotion_id": <string>,
+    ##    "store_id": <string>,
+    ##    "title": <string>,
+    ##  }
     def get(self):
         self.reqparse.add_argument("promotion_id", type =  str, required=True, help="No Promotion ID Provided")
         args = self.reqparse.parse_args();
@@ -22,7 +71,13 @@ class promotion(MethodView):
         nv = r.db("beaconrebuild").table("store_promotion").filter({"promotion_id":args["promotion_id"] }).run()
         return returnJSON(nv)
 
-    ## HTTP DELETE METHOD
+
+    ##  HTTP DELETE METHOD
+    ##  onFailure => []
+    ##      Will not happen.
+    ##  onSuccess => {
+    ##      "deleted": <string:promotion_id>
+    ##  }
     def delete(self):
         self.reqparse.add_argument("promotion_id", type =  str, required=True, help="No Promotion ID Provided")
         args = self.reqparse.parse_args()
@@ -30,7 +85,13 @@ class promotion(MethodView):
         r.db("beaconrebuild").table("store_promotion").filter({"promotion_id":args["promotion_id"] }).delete().run()
         return {"deleted": args["promotion_id"]}
 
-    ## HTTP PUT METHOD
+    ##  HTTP PUT METHOD
+    ##  onFailure => {
+    ##      "message": {
+    ##          "content": "There is no Promotion with that ID"
+    ##       }
+    ##  }
+    ##  onSuccess => Returns the updated Document, enclosed in an array;
     def put(self):
         self.reqparse.add_argument("promotion_id", type =  str, required=True, help="No Promotion ID Provided")
         self.reqparse.add_argument("update", type=str, required=True, help="JSON Update not Defined.")
@@ -56,7 +117,12 @@ class promotion(MethodView):
             return returnJSON(nv)
         pass
 
-    ## HTTP POST METHOD
+    ##  HTTP POST METHOD
+    ##  onFailure => []
+    ##      It will either throw an error or the ReqParser will catch any bad inputs;
+    ##  onSuccess => [{}]
+    ##      will return the newly created document encased in an array,
+    ##      similar to how HTTP GET request was carried out
     def post(self):
         self.reqparse.add_argument("title", type=str, required=True, help="Title not Defined.")
         self.reqparse.add_argument("message", type=str, required=True, help="Message not Defined.")
@@ -89,4 +155,5 @@ class promotion(MethodView):
           "active": args["active"]
         }).run()
         isitthere = r.db("beaconrebuild").table("store_promotion").filter({"promotion_id": promo}).limit(1).run()
+        ## return JSON Friendly format
         return returnJSON(isitthere)

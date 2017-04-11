@@ -4,7 +4,9 @@ The Server code which is responsible for interfacing our [Android App]("https://
 
 ## Setting Up The Development Environment
 
-1. Setup the git repo locally via the GitHub Desktop app.
+> Make sure RethinkDB is already setup and listening on the default port, as C3990-Server looks for the RethinkDB  on its default port.
+
+1. Setup the git repo locally via the GitHub Desktop app or via command line.
 2. Once that is done, make sure the dependances are installed via PIP: Flask, flask-restful, flask-cors.
 
 ```
@@ -13,7 +15,7 @@ pip install flask-restful
 pip install flask-cors
 ```
 
-3. Run the python script via:
+3. Run the python script via (You may need sudo if you are on a \*nix machine)
 
 ```
 py api.py
@@ -22,6 +24,11 @@ py api.py
 The way Flask is setup, it allows you to make modifications to the code and reloads it.
 
 # Changelog
+
+### 10/04/17 - Documentation Galore;
+
+- Adding in documentation for all files.
+- Adding in all of the required examples for the endpoints;
 
 ### 09/04/17
 

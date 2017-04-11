@@ -1,11 +1,28 @@
+
+##  interactstat_store.py
+##
+##  provides the Stats Data for stores endpoint;
+##
+##  ENDPOINT: /api/stats/interact/user/store
+##  REST STATES: GET
+##
+##  Input:
+##  user_id: Flask looks in the default locations, including JSON
+##
+##  Example: GET
+##  curl -H "Content-Type: application/json" -X <GET/DELETE> -d '{"user_id": <string:user_id>}' http://localhost:5000/api/stats/interact/user/store
+
+##  Required Flask Packages;;
 from flask import Flask
 from flask_restful import reqparse, abort, Api, Resource
 from flask.views import MethodView
 
+##  Required Database
 import rethinkdb as r
+##  Required Python Packages;
 import json, uuid, sys
 
-## Customer Helper Functions
+## Custom Helper Functions
 from functions import *
 
 
@@ -14,17 +31,34 @@ class interactstat_userstore(MethodView):
         self.reqparse = reqparse.RequestParser(bundle_errors=True)
         super(interactstat_userstore, self).__init__()
 
-    ## HTTP GET METHOD
+    ##  HTTP GET METHOD
+    ##  onFailure => []
+    ##  onSuccess => [ArrayOf<customDocument>]
+    ##    CustomDocument Example:  {
+    ##    "beacon_id": <string>,
+    ##    "date": <string>,
+    ##    "promotion": {
+    ##        "active": <string>,
+    ##        "coupon": <string>,
+    ##        "expires": <string>,
+    ##        "id": <string>,
+    ##        "message": <string>,
+    ##        "present": <string>,
+    ##        "promotionImage": <string>,
+    ##        "promotion_id": <string>,
+    ##        "store_id": <string>,
+    ##        "title": <string>
+    ##    },
+    ##    "promotion_id": <string>,
+    ##    "storeName": <string>,
+    ##    "store_id": <string>
+    ##  }
+    ##
     def get(self):
         self.reqparse.add_argument("user_id", type =  str, required=True, help="No User ID Provided")
         args = self.reqparse.parse_args();
         initConnection()
         userId = args["user_id"]
-        # ntbl = r.db("beaconrebuild").table("store").filter({"store_manager_id": userId}).merge(lambda store:
-        #     {"beacons": r.db("beaconrebuild").table("user_interactbeacon").filter(lambda store:
-        #         store["interacted"]["beacon_id"].contains(store["beacons"])
-        #     ).coerce_to("array")}
-        # ).run()
 
         ## Get all of the stores managed by userId
         ntbl = r.db("beaconrebuild").table("store").filter({"store_manager_id": userId}).run();
@@ -39,7 +73,7 @@ class interactstat_userstore(MethodView):
                 q2 = r.db("beaconrebuild").table("user_interactbeacon").filter(lambda store:
                         store["interacted"]["beacon_id"].contains(beacon)
                      ).run()
-                # return returnJSON(q2)
+
                 # for each user that interacted with this beacon;
                 for j in q2:
                     # return returnJSON(j["interacted"])
@@ -53,7 +87,7 @@ class interactstat_userstore(MethodView):
                             for promo in x:
                                 interaction["promotion"] = promo
                             tos.append(interaction)
-            # beacons.append(tos)
+
         # return an array of documents with contain the beacon_id, store_id and date;
         return tos
 

@@ -1,11 +1,28 @@
+
+##  interactstat_userstorepromo.py
+##
+##  provides the Stats Data for stores endpoint;
+##
+##  ENDPOINT: ?
+##  REST STATES: GET
+##
+##  Input:
+##  store_id: Flask looks in the default locations, including JSON
+##
+##  Example: GET
+##  curl -H "Content-Type: application/json" -X <GET/DELETE> -d '{"store_id": <string:store_id>}' http://localhost:5000/api/stats/interact/user/store
+
+##  Required Flask Packages;;
 from flask import Flask
 from flask_restful import reqparse, abort, Api, Resource
 from flask.views import MethodView
 
+##  Required Database
 import rethinkdb as r
+##  Required Python Packages;
 import json, uuid, sys
 
-## Customer Helper Functions
+## Custom Helper Functions
 from functions import *
 
 
@@ -14,17 +31,14 @@ class interactstat_userstorepromo(MethodView):
         self.reqparse = reqparse.RequestParser(bundle_errors=True)
         super(interactstat_userstorepromo, self).__init__()
 
-    ## HTTP GET METHOD
+    ##  HTTP GET METHOD
+    ##  onFailure => []
+    ##  onSuccess => [ArrayOf<customDocument>]
     def get(self):
         self.reqparse.add_argument("store_id", type =  str, required=True, help="No User ID Provided")
         args = self.reqparse.parse_args();
         initConnection()
         userId = args["store_id"]
-        # ntbl = r.db("beaconrebuild").table("store").filter({"store_manager_id": userId}).merge(lambda store:
-        #     {"beacons": r.db("beaconrebuild").table("user_interactbeacon").filter(lambda store:
-        #         store["interacted"]["beacon_id"].contains(store["beacons"])
-        #     ).coerce_to("array")}
-        # ).run()
 
         ## Get all of the stores managed by userId
         ntbl = r.db("beaconrebuild").table("store_promotion").filter({"store_id": userId}).run();
