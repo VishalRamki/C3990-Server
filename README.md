@@ -1,13 +1,14 @@
 # C3990-Server
 
-The Server code which is responsible for interfacing our [Android App]("https://www.github.com/VishalRamki/C3990") as well as our Web-based Client. It is built on Python, Flask and RethinkDB.
+The server code which is responsible for interfacing our [Android App]("https://www.github.com/VishalRamki/C3990") as well as our web-based client. It is built on Python, Flask and RethinkDB.
 
 ## Setting Up The Development Environment
 
 > Make sure RethinkDB is already setup and listening on the default port, as C3990-Server looks for the RethinkDB  on its default port.
+> Also make sure you have run `setupdb.py` at least once, in order to load the database.
 
 1. Setup the git repo locally via the GitHub Desktop app or via command line.
-2. Once that is done, make sure the dependances are installed via PIP: Flask, flask-restful, flask-cors.
+2. Once that is done, make sure the dependencies are installed via PIP: Flask, flask-restful, flask-cors.
 
 ```
 pip install flask
@@ -15,7 +16,8 @@ pip install flask-restful
 pip install flask-cors
 ```
 
-3. Run the python script via (You may need sudo if you are on a \*nix machine)
+3. Make sure that you have run the `setupdb.py` at least once, to create all the tables and secondary indexs.
+4. Run the python script via (You may need sudo if you are on a \*nix machine)
 
 ```
 py api.py
@@ -53,14 +55,14 @@ This brings our server to BETA completion. There is all the basic functionalitie
 
 - Added new routes and endpoints, `/api/user`, `/api/beacon`, `/api/user/beacons`
 - REST methods implemented, however not all the REST functions are implemented for all the endpoints. (This is by design)
-- All the functions are raw input/ouput, no sorting or anything liek that.
+- All the functions are raw input/output, no sorting or anything like that.
 
 
 ### 15/03/17 - Addition Of New Routes [store, promotion]
 
 - Added new routes and endpoints which correspond to the `/api/store` and `/api/promotion`
 - All four REST methods implemented for both store and promotion.
-- Store and Promotion deals with a single store or promotion. Additional classes will be written for sorting and the like.
+- Store and Promotion deals with a single store or promotion. Additional classes will be written for sorting.
 - General Bugfixing
 
 ### 25/02/17 - Skeleton and Reorganization
